@@ -1,0 +1,32 @@
+name: 🛡️ Sentinel AI - Security Scan
+
+# Quando rodar? Sempre que alguém der Push ou abrir um Pull Request
+on: [push, pull_request]
+
+jobs:
+  devsecops-check:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      
+    steps:
+      # 1. Baixa o código do repositório
+      - name: Checkout do Código
+        uses: actions/checkout@v3
+
+      # 2. Prepara o Python
+      - name: Instalar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      # 3. Instala biblioteca de requisições
+      - name: Instalar Dependências
+        run: pip install requests
+
+      # 4. Roda o Sentinel Scan
+      # O segredo GOOGLE_API_KEY é injetado como variável de ambiente
+      - name: 🔍 Analisar Infraestrutura com IA
+        env:
+          GOOGLE_API_KEY: ${{ secrets.GOOGLE_API_KEY }}
+        run: python sentinel_scan.py infra_vulneravel.json
